@@ -73,7 +73,7 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          {/* <LanguageSwitcher /> */}
           <ModeToggle />
           {/* <MagneticButton as="div" strength={30}>
             <Button asChild className="hidden md:flex">
