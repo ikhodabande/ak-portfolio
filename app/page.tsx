@@ -130,14 +130,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen no-scrollbar ">
       {/* Scroll Progress Bar */}
       <ScrollProgress />
 
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 overflow-hidden relative"
+        className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 overflow-hidden no-scrollbar relative"
         style={{ backgroundSize: "120% auto", backgroundPosition: "center 0%" }}
       >
         <div className="container px-4 md:px-6">
@@ -276,8 +276,8 @@ export default function Home() {
               {t("about.description2")}
             </ScrollTextAnimation>
           </div>
-          <ScrollZoom className="flex justify-center">
-            <TiltCard tiltMaxAngleX={10} tiltMaxAngleY={10} glareOpacity={0.2}>
+          {/* <ScrollZoom className="flex justify-center"> */}
+            {/* <TiltCard tiltMaxAngleX={10} tiltMaxAngleY={10} glareOpacity={0.2}> */}
               <motion.div
                 className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] overflow-hidden rounded-full border-4 border-white dark:border-slate-800 shadow-xl"
                 transition={{ duration: 0.3 }}
@@ -290,8 +290,8 @@ export default function Home() {
                   height={320}
                 />
               </motion.div>
-            </TiltCard>
-          </ScrollZoom>
+            {/* </TiltCard> */}
+          {/* </ScrollZoom> */}
         </div>
       </ParallaxSection>
 
