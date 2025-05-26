@@ -1,22 +1,23 @@
-import type React from "react"
-import "./globals.css"
-import { Inter, Vazirmatn } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
-import { LanguageProvider } from "@/context/language-context"
-import type { Metadata, Viewport } from "next"
+import type React from "react";
+import "./globals.css";
+import { Inter, Vazirmatn } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
+import { LanguageProvider } from "@/context/language-context";
+import type { Metadata, Viewport } from "next";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
 
 // Load fonts
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-})
+});
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
   variable: "--font-vazirmatn",
-})
+});
 
 export const metadata: Metadata = {
   title: {
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "Amirmohammad Khodabande",
-      url: "https://yourwebsite.com",
+      url: "https://amirmkhodabande.ir",
     },
   ],
   creator: "Amirmohammad Khodabande",
@@ -57,6 +58,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   twitter: {
     card: "summary_large_image",
     title: "امیرمحمد خدابنده | طراح و توسعه دهنده فرانت اند",
@@ -64,8 +68,8 @@ export const metadata: Metadata = {
     images: ["/og-image.jpg"],
     creator: "@yourtwitterhandle",
   },
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export const viewport: Viewport = {
   themeColor: [
@@ -76,18 +80,23 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="fa" dir="rtl">
       <body className={`${inter.variable} ${vazirmatn.variable} font-sans`}>
         <LanguageProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-1">{children}</main>
@@ -97,5 +106,5 @@ export default function RootLayout({
         </LanguageProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -20,9 +20,12 @@ import ScrollProgress from "@/components/animations/scroll-progress";
 import TiltCard from "@/components/animations/tilt-card";
 import MagneticButton from "@/components/animations/magnetic-button";
 import ScrollTextAnimation from "@/components/animations/scroll-text-animation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Particles } from "@/components/ui/particles";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 
 // Featured projects - these would come from your database in the real implementation
 const featuredProjects = [
@@ -86,6 +89,13 @@ export default function Home() {
   const { t, language } = useLanguage();
   const heroRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+  const [color, setColor] = useState("#ffffff");
+  const aboutImage = "/image/static/about-image.JPG";
+
+  useEffect(() => {
+    setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
+  }, [resolvedTheme]);
 
   useEffect(() => {
     // Register ScrollTrigger plugin
@@ -140,6 +150,13 @@ export default function Home() {
         className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 overflow-hidden no-scrollbar relative"
         style={{ backgroundSize: "120% auto", backgroundPosition: "center 0%" }}
       >
+        <Particles
+          className="absolute inset-0 z-0"
+          quantity={100}
+          ease={80}
+          color={color}
+          refresh
+        />
         <div className="container px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex flex-col items-center lg:items-start text-center lg:text-start space-y-6 lg:w-1/2">
@@ -174,17 +191,17 @@ export default function Home() {
                 </ScrollTextAnimation>
               </motion.div>
               <motion.div
-                className="flex flex-col sm:flex-row gap-3"
+                className="flex  flex-col sm:flex-row gap-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
               >
-                <MagneticButton as="div" strength={40}>
+                <MagneticButton as="div" strength={1}>
                   <Button asChild>
                     <Link href="/projects">{t("hero.viewProjects")}</Link>
                   </Button>
                 </MagneticButton>
-                <MagneticButton as="div" strength={40}>
+                <MagneticButton as="div" strength={1}>
                   <Button variant="outline" asChild>
                     <Link href="/contact">{t("hero.contact")}</Link>
                   </Button>
@@ -250,7 +267,7 @@ export default function Home() {
 
       {/* About Section with Parallax */}
       <ParallaxSection className="py-12 md:py-16 bg-white dark:bg-slate-900 min-h-[80vh] flex items-center">
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+        <div className="grid gap-6 lg:grid-cols-2  lg:gap-12 items-center">
           <div className="space-y-4">
             <ScrollTextAnimation
               type="slide-up"
@@ -276,28 +293,30 @@ export default function Home() {
               {t("about.description2")}
             </ScrollTextAnimation>
           </div>
-          {/* <ScrollZoom className="flex justify-center"> */}
-            {/* <TiltCard tiltMaxAngleX={10} tiltMaxAngleY={10} glareOpacity={0.2}> */}
+          <div className="flex items-center justify-center w-full ">
+            <ScrollZoom >
+            <TiltCard  tiltMaxAngleX={10} tiltMaxAngleY={10} glareOpacity={0.2}>
               <motion.div
-                className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] overflow-hidden rounded-full border-4 border-white dark:border-slate-800 shadow-xl"
+                className="relative z-50 w-[280px] h-[280px] md:w-[320px] md:h-[320px] overflow-hidden rounded-full border-4 border-slate-50 dark:border-slate-800 "
                 transition={{ duration: 0.3 }}
               >
-                <img
-                  src="/placeholder.svg?height=320&width=320"
+                <Image
+                  src={aboutImage}
                   alt="Amirmohammad Khodabande"
                   className="object-cover"
                   width={320}
                   height={320}
                 />
               </motion.div>
-            {/* </TiltCard> */}
-          {/* </ScrollZoom> */}
+            </TiltCard>
+          </ScrollZoom>
+          </div>
         </div>
       </ParallaxSection>
 
       {/* Multi-layer Parallax Background */}
       <ParallaxLayers
-        className="py-20 md:py-32 bg-gradient-to-b from-blue-50 to-white dark:from-blue-950 dark:to-slate-900 min-h-[60vh] flex items-center"
+        className="py-20 md:py-28 bg-gradient-to-b from-blue-50 to-white dark:from-blue-950 dark:to-slate-900  flex items-start min-h-[100vh] "
         layers={[
           {
             content: (
@@ -321,7 +340,7 @@ export default function Home() {
           },
           {
             content: (
-              <div className="relative z-10">
+              <div className="relative h-full">
                 <div className="text-center max-w-3xl mx-auto">
                   <ScrollTextAnimation
                     type="words"
@@ -339,8 +358,8 @@ export default function Home() {
                       ? "با استفاده از تکنولوژی‌های مدرن و روش‌های پیشرفته، راه‌حل‌های خلاقانه برای چالش‌های پیچیده ارائه می‌دهم."
                       : "Using modern technologies and advanced methodologies, I deliver creative solutions for complex challenges."}
                   </ScrollTextAnimation>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <StaggerReveal>
+                  <div>
+                    <StaggerReveal className="flex flex-row lg:flex-col gap-4">
                       <TiltCard
                         tiltMaxAngleX={5}
                         tiltMaxAngleY={5}
