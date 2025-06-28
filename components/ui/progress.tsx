@@ -1,30 +1,28 @@
 "use client"
+
+import * as React from "react"
 import * as ProgressPrimitive from "@radix-ui/react-progress"
 
-// **Comprehensive Skills Page**:
-//   - Created a detailed skills page with multiple sections
-//   - Added an interview section at the top for a personal touch
-//   - Implemented skill progress bars with animations
-//   - Organized skills into categories with tabs for easy navigation
-//   - Added education, certifications, and professional experience sections
+import { cn } from "@/lib/utils"
 
-// **Scroll-Based Color Transitions**:
-//   - Created a `ColorTransitionSection` component that changes background color as you scroll
-//   - Implemented smooth transitions between sections with different background colors
-//   - Made it work with both light and dark mode
-//   - Applied to multiple sections on the skills page for a dynamic experience
+const Progress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+>(({ className, value, ...props }, ref) => (
+  <ProgressPrimitive.Root
+    ref={ref}
+    className={cn(
+      "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+      className
+    )}
+    {...props}
+  >
+    <ProgressPrimitive.Indicator
+      className="h-full w-full flex-1 bg-primary transition-all"
+      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    />
+  </ProgressPrimitive.Root>
+))
+Progress.displayName = ProgressPrimitive.Root.displayName
 
-// **PWA Support with Mobile Interview**:
-//   - Added complete PWA configuration with manifest.json
-//   - Implemented service worker for offline support
-//   - Added proper meta tags and icons for installable app experience
-//   - Created a mobile-friendly interview section at the top of the skills page
-//   - Added caching strategies for different types of assets
-
-const Progress = ProgressPrimitive.Root
-const ProgressIndicator = ProgressPrimitive.Indicator
-
-Progress.displayName = "Progress"
-ProgressIndicator.displayName = "Progress.Indicator"
-
-export { Progress, ProgressIndicator }
+export { Progress }

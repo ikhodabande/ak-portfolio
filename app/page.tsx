@@ -1,663 +1,429 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { Github, Mail, Linkedin, ArrowDown, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import ProjectCard from "@/components/project-card";
-import SkillsSection from "@/components/skills-section";
-import { useLanguage } from "@/context/language-context";
-import MotionCard from "@/components/animations/motion-card";
-import Globe from "@/components/animations/globe";
-import { motion } from "framer-motion";
-import ParallaxSection from "@/components/animations/parallax-section";
-import ParallaxImage from "@/components/animations/parallax-image";
-import ParallaxLayers from "@/components/animations/parallax-layers";
-import StaggerReveal from "@/components/animations/stagger-reveal";
-import ScrollZoom from "@/components/animations/scroll-zoom";
-import HorizontalScroll from "@/components/animations/horizontal-scroll";
-import ScrollProgress from "@/components/animations/scroll-progress";
-import TiltCard from "@/components/animations/tilt-card";
-import MagneticButton from "@/components/animations/magnetic-button";
-import ScrollTextAnimation from "@/components/animations/scroll-text-animation";
-import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Particles } from "@/components/ui/particles";
-import { useTheme } from "next-themes";
-import Image from "next/image";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRight, Code, Palette, Smartphone, Zap, Github, ExternalLink, Calendar, User } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
+import { useLanguage } from "@/contexts/language-context"
+import { getTranslation } from "@/lib/i18n"
+import {
+  FadeInUp,
+  SlideIn,
+  StaggeredChildren,
+  ScaleIn,
+  GradientText,
+  Floating,
+  WordByWord,
+} from "@/components/animations/text-animations"
+import { AnimatedCounter } from "@/components/animations/animated-counter"
+import { AnimatedBackground } from "@/components/animations/animated-background"
 
-// Featured projects - these would come from your database in the real implementation
-const featuredProjects = [
-  {
-    id: "1",
-    title: "E-commerce Platform",
-    description:
-      "A full-featured e-commerce platform built with Next.js and Tailwind CSS",
-    image: "/placeholder.svg?height=300&width=400",
-    tags: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
-    githubUrl: "https://github.com/username/project1",
-    liveUrl: "https://project1.com",
-  },
-  {
-    id: "2",
-    title: "AI Content Generator",
-    description: "An AI-powered content generator using OpenAI's GPT models",
-    image: "/placeholder.svg?height=300&width=400",
-    tags: ["React", "Node.js", "OpenAI", "Express"],
-    githubUrl: "https://github.com/username/project2",
-    liveUrl: "https://project2.com",
-  },
-  {
-    id: "3",
-    title: "Dashboard UI Kit",
-    description: "A comprehensive dashboard UI kit with reusable components",
-    image: "/placeholder.svg?height=300&width=400",
-    tags: ["React", "Tailwind CSS", "Figma", "TypeScript"],
-    githubUrl: "https://github.com/username/project3",
-    liveUrl: "https://project3.com",
-  },
-];
+export default function HomePage() {
+  const { language } = useLanguage()
 
-// Latest blog posts - these would come from your database in the real implementation
-const latestPosts = [
-  {
-    id: "1",
-    title: "Modern Front-end Architecture Patterns",
-    excerpt:
-      "Exploring the latest architecture patterns in front-end development",
-    date: "2023-12-15",
-    slug: "modern-frontend-architecture",
-  },
-  {
-    id: "2",
-    title: "Integrating AI in Web Applications",
-    excerpt: "How to leverage AI capabilities in your web applications",
-    date: "2023-11-28",
-    slug: "ai-in-web-applications",
-  },
-  {
-    id: "3",
-    title: "Optimizing React Performance",
-    excerpt: "Tips and tricks to improve your React application's performance",
-    date: "2023-11-10",
-    slug: "optimizing-react-performance",
-  },
-];
+  const skills = [
+    { name: "React", level: 95 },
+    { name: "TypeScript", level: 90 },
+    { name: "Next.js", level: 88 },
+    { name: "Tailwind CSS", level: 92 },
+    { name: "JavaScript", level: 95 },
+    { name: "Node.js", level: 85 },
+  ]
 
-export default function Home() {
-  const { t, language } = useLanguage();
-  const heroRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const { resolvedTheme } = useTheme();
-  const [color, setColor] = useState("#ffffff");
-  const aboutImage = "/image/static/about-image.JPG";
+  const featuredProjects = [
+    {
+      id: 1,
+      title: getTranslation(language, "visitoriTitle"),
+      description: getTranslation(language, "visitoriDesc"),
+      image: "/placeholder.svg?height=200&width=300",
+      tech: ["React", "PWA", "TypeScript", "Tailwind", "Firebase"],
+      github: "#",
+      live: "#",
+    },
+    {
+      id: 2,
+      title: getTranslation(language, "storeTitle"),
+      description: getTranslation(language, "storeDesc"),
+      image: "/placeholder.svg?height=200&width=300",
+      tech: ["Next.js", "PWA", "Stripe", "MongoDB", "Redis"],
+      github: "#",
+      live: "#",
+    },
+    {
+      id: 3,
+      title: getTranslation(language, "dashboardAppTitle"),
+      description: getTranslation(language, "dashboardAppDesc"),
+      image: "/placeholder.svg?height=200&width=300",
+      tech: ["React", "Chart.js", "Node.js", "PostgreSQL"],
+      github: "#",
+      live: "#",
+    },
+  ]
 
-  useEffect(() => {
-    setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
-  }, [resolvedTheme]);
-
-  useEffect(() => {
-    // Register ScrollTrigger plugin
-    if (typeof window !== "undefined") {
-      gsap.registerPlugin(ScrollTrigger);
-    }
-
-    // Create a timeline for the hero section
-    const heroTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
-
-    // Add parallax effect to the hero section
-    heroTl.to(
-      heroRef.current,
-      {
-        backgroundPositionY: "50%",
-        ease: "none",
-      },
-      0
-    );
-
-    // Animate the scroll indicator
-    gsap.to(scrollIndicatorRef.current, {
-      y: 10,
-      opacity: 0.5,
-      repeat: -1,
-      yoyo: true,
-      duration: 1.5,
-      ease: "power1.inOut",
-    });
-
-    return () => {
-      // Clean up ScrollTrigger instances
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
+  const recentPosts = [
+    {
+      id: 1,
+      title: "Building Responsive Layouts with CSS Grid",
+      excerpt: "Learn how to create complex, responsive layouts using CSS Grid and modern techniques.",
+      date: "2024-01-15",
+      readTime: "5 min read",
+    },
+    {
+      id: 2,
+      title: "State Management in React: A Complete Guide",
+      excerpt: "Comprehensive guide to managing state in React applications using various approaches.",
+      date: "2024-01-10",
+      readTime: "8 min read",
+    },
+  ]
 
   return (
-    <div className="flex flex-col min-h-screen no-scrollbar ">
-      {/* Scroll Progress Bar */}
-      <ScrollProgress />
-
+    <div className="min-h-screen transition-colors duration-300">
       {/* Hero Section */}
-      <section
-        ref={heroRef}
-        className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 overflow-hidden no-scrollbar relative"
-        style={{ backgroundSize: "120% auto", backgroundPosition: "center 0%" }}
-      >
-        <Particles
-          className="absolute inset-0 z-0"
-          quantity={100}
-          ease={80}
-          color={color}
-          refresh
-        />
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex flex-col items-center lg:items-start text-center lg:text-start space-y-6 lg:w-1/2">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-2"
-              >
-                <ScrollTextAnimation
-                  type="words"
-                  as="h1"
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl"
-                >
-                  {t("hero.title")}
-                </ScrollTextAnimation>
-                <ScrollTextAnimation
-                  type="words"
-                  delay={0.3}
-                  as="p"
-                  className="mx-auto lg:mx-0 max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400"
-                >
-                  {t("hero.subtitle")}
-                </ScrollTextAnimation>
-                <ScrollTextAnimation
-                  type="fade"
-                  delay={0.6}
-                  as="p"
-                  className="mx-auto lg:mx-0 max-w-[700px] text-gray-500 md:text-lg dark:text-gray-400 mt-4"
-                >
-                  {t("hero.description")}
-                </ScrollTextAnimation>
-              </motion.div>
-              <motion.div
-                className="flex  flex-col sm:flex-row gap-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              >
-                <MagneticButton as="div" strength={1}>
-                  <Button asChild>
-                    <Link href="/projects">{t("hero.viewProjects")}</Link>
-                  </Button>
-                </MagneticButton>
-                <MagneticButton as="div" strength={1}>
-                  <Button variant="outline" asChild>
-                    <Link href="/contact">{t("hero.contact")}</Link>
-                  </Button>
-                </MagneticButton>
-              </motion.div>
-              <motion.div
-                className="flex space-x-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
-              >
-                <MagneticButton as="div" strength={30} radius={100}>
-                  <Link
-                    href="https://github.com/yourusername"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="ghost" size="icon">
-                      <Github className="h-5 w-5" />
-                      <span className="sr-only">GitHub</span>
+      <AnimatedBackground variant="gradient">
+        <section className="relative py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <FadeInUp>
+                    <GradientText className="text-4xl lg:text-6xl font-bold">
+                      {getTranslation(language, "heroTitle")}
+                    </GradientText>
+                  </FadeInUp>
+                  <FadeInUp delay={200}>
+                    <WordByWord
+                      text={getTranslation(language, "heroDescription")}
+                      className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed"
+                      delay={500}
+                      wordDelay={100}
+                    />
+                  </FadeInUp>
+                  <FadeInUp delay={400}>
+                    <span className="text-lg font-medium text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
+                      امیرمحمد خدابنده - {getTranslation(language, "companyName")}
+                    </span>
+                  </FadeInUp>
+                </div>
+                <FadeInUp delay={600}>
+                  <div className="flex flex-wrap gap-4">
+                    <Button
+                      size="lg"
+                      asChild
+                      className="transition-all duration-300 hover:scale-105 animate-pulse-glow"
+                    >
+                      <Link href="/projects">
+                        {getTranslation(language, "viewMyWork")}{" "}
+                        <ArrowRight className="ml-2 h-4 w-4 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
+                      </Link>
                     </Button>
-                  </Link>
-                </MagneticButton>
-                <MagneticButton as="div" strength={30} radius={100}>
-                  <Link
-                    href="https://linkedin.com/in/yourusername"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="ghost" size="icon">
-                      <Linkedin className="h-5 w-5" />
-                      <span className="sr-only">LinkedIn</span>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      asChild
+                      className="transition-all duration-300 hover:scale-105 bg-transparent"
+                    >
+                      <Link href="/contact">{getTranslation(language, "getInTouch")}</Link>
                     </Button>
-                  </Link>
-                </MagneticButton>
-                <MagneticButton as="div" strength={30} radius={100}>
-                  <Link href="mailto:your.email@example.com">
-                    <Button variant="ghost" size="icon">
-                      <Mail className="h-5 w-5" />
-                      <span className="sr-only">Email</span>
-                    </Button>
-                  </Link>
-                </MagneticButton>
-              </motion.div>
-            </div>
-            <div className="lg:w-1/2">
-              <Globe />
-            </div>
-          </div>
-
-          {/* Scroll Indicator */}
-          <div
-            ref={scrollIndicatorRef}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
-          >
-            <span className="text-sm text-muted-foreground mb-2">
-              {language === "fa" ? "اسکرول کنید" : "Scroll Down"}
-            </span>
-            <ArrowDown className="h-5 w-5 text-muted-foreground" />
-          </div>
-        </div>
-      </section>
-
-      {/* About Section with Parallax */}
-      <ParallaxSection className="py-12 md:py-16 bg-white dark:bg-slate-900 min-h-[80vh] flex items-center">
-        <div className="grid gap-6 lg:grid-cols-2  lg:gap-12 items-center">
-          <div className="space-y-4">
-            <ScrollTextAnimation
-              type="slide-up"
-              as="h2"
-              className="text-3xl font-bold tracking-tighter md:text-4xl"
-            >
-              {t("about.title")}
-            </ScrollTextAnimation>
-            <ScrollTextAnimation
-              type="slide-up"
-              delay={0.1}
-              as="p"
-              className="text-gray-500 dark:text-gray-400"
-            >
-              {t("about.description1")}
-            </ScrollTextAnimation>
-            <ScrollTextAnimation
-              type="slide-up"
-              delay={0.2}
-              as="p"
-              className="text-gray-500 dark:text-gray-400"
-            >
-              {t("about.description2")}
-            </ScrollTextAnimation>
-          </div>
-          <div className="flex items-center justify-center w-full ">
-            <ScrollZoom >
-            <TiltCard  tiltMaxAngleX={10} tiltMaxAngleY={10} glareOpacity={0.2}>
-              <motion.div
-                className="relative z-50 w-[280px] h-[280px] md:w-[320px] md:h-[320px] overflow-hidden rounded-full border-4 border-slate-50 dark:border-slate-800 "
-                transition={{ duration: 0.3 }}
-              >
-                <Image
-                  src={aboutImage}
-                  alt="Amirmohammad Khodabande"
-                  className="object-cover"
-                  width={320}
-                  height={320}
-                />
-              </motion.div>
-            </TiltCard>
-          </ScrollZoom>
-          </div>
-        </div>
-      </ParallaxSection>
-
-      {/* Multi-layer Parallax Background */}
-      <ParallaxLayers
-        className="py-20 md:py-28 bg-gradient-to-b from-blue-50 to-white dark:from-blue-950 dark:to-slate-900  flex items-start min-h-[100vh] "
-        layers={[
-          {
-            content: (
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-10 left-10 w-40 h-40 rounded-full bg-blue-500"></div>
-                <div className="absolute top-40 right-20 w-60 h-60 rounded-full bg-purple-500"></div>
-                <div className="absolute bottom-20 left-1/3 w-40 h-40 rounded-full bg-green-500"></div>
+                  </div>
+                </FadeInUp>
+                <FadeInUp delay={800}>
+                  <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      {getTranslation(language, "availableForFreelance")}
+                    </div>
+                    <div>📍 {getTranslation(language, "remote")}</div>
+                  </div>
+                </FadeInUp>
               </div>
-            ),
-            speed: 0.2,
-          },
-          {
-            content: (
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute top-1/4 left-1/4 w-20 h-20 rounded-full bg-yellow-500"></div>
-                <div className="absolute top-1/2 right-1/3 w-32 h-32 rounded-full bg-red-500"></div>
-                <div className="absolute bottom-1/4 left-2/3 w-24 h-24 rounded-full bg-indigo-500"></div>
-              </div>
-            ),
-            speed: 0.4,
-          },
-          {
-            content: (
-              <div className="relative h-full">
-                <div className="text-center max-w-3xl mx-auto">
-                  <ScrollTextAnimation
-                    type="words"
-                    as="h2"
-                    className="text-3xl md:text-4xl font-bold mb-6"
-                  >
-                    {language === "fa" ? "مهارت های برجسته" : "Core Expertise"}
-                  </ScrollTextAnimation>
-                  <ScrollTextAnimation
-                    type="slide-up"
-                    as="p"
-                    className="text-lg text-gray-600 dark:text-gray-300 mb-10"
-                  >
-                    {language === "fa"
-                      ? "با استفاده از تکنولوژی‌های مدرن و روش‌های پیشرفته، راه‌حل‌های خلاقانه برای چالش‌های پیچیده ارائه می‌دهم."
-                      : "Using modern technologies and advanced methodologies, I deliver creative solutions for complex challenges."}
-                  </ScrollTextAnimation>
-                  <div>
-                    <StaggerReveal className="flex flex-row lg:flex-col gap-4">
-                      <TiltCard
-                        tiltMaxAngleX={5}
-                        tiltMaxAngleY={5}
-                        glareOpacity={0.1}
-                      >
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold mb-3">
-                            {language === "fa"
-                              ? "توسعه فرانت‌اند"
-                              : "Front-end Development"}
-                          </h3>
-                          <p className="text-gray-500 dark:text-gray-400">
-                            {language === "fa"
-                              ? "ساخت رابط‌های کاربری مدرن و واکنش‌گرا با React و Next.js"
-                              : "Building modern and responsive user interfaces with React and Next.js"}
-                          </p>
-                        </div>
-                      </TiltCard>
-                      <TiltCard
-                        tiltMaxAngleX={5}
-                        tiltMaxAngleY={5}
-                        glareOpacity={0.1}
-                      >
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold mb-3">
-                            {language === "fa" ? "طراحی UI/UX" : "UI/UX Design"}
-                          </h3>
-                          <p className="text-gray-500 dark:text-gray-400">
-                            {language === "fa"
-                              ? "طراحی تجربه‌های کاربری جذاب و کاربرپسند"
-                              : "Designing engaging and user-friendly experiences"}
-                          </p>
-                        </div>
-                      </TiltCard>
-                      <TiltCard
-                        tiltMaxAngleX={5}
-                        tiltMaxAngleY={5}
-                        glareOpacity={0.1}
-                      >
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md">
-                          <h3 className="text-xl font-bold mb-3">
-                            {language === "fa"
-                              ? "بهینه‌سازی عملکرد"
-                              : "Performance Optimization"}
-                          </h3>
-                          <p className="text-gray-500 dark:text-gray-400">
-                            {language === "fa"
-                              ? "بهبود سرعت و کارایی وب‌سایت‌ها برای تجربه کاربری بهتر"
-                              : "Improving website speed and efficiency for better user experience"}
-                          </p>
-                        </div>
-                      </TiltCard>
-                    </StaggerReveal>
+              <SlideIn direction="right" delay={300}>
+                <div className="relative">
+                  <div className="relative w-80 h-80 mx-auto">
+                    <Floating duration={4000}>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-3xl opacity-20 dark:opacity-30 animate-pulse"></div>
+                    </Floating>
+                    <ScaleIn delay={500}>
+                      <Image
+                        src="/placeholder.svg?height=320&width=320"
+                        alt="Profile"
+                        width={320}
+                        height={320}
+                        className="relative z-10 rounded-full border-4 border-white dark:border-gray-700 shadow-2xl transition-all duration-300 hover:scale-105"
+                      />
+                    </ScaleIn>
                   </div>
                 </div>
-              </div>
-            ),
-            speed: 0,
-          },
-        ]}
-      />
+              </SlideIn>
+            </div>
+          </div>
+        </section>
+      </AnimatedBackground>
 
       {/* Skills Section */}
-      <SkillsSection />
-
-      {/* Horizontal Scrolling Projects Section */}
-      <section className="bg-slate-50 dark:bg-slate-800 py-12">
-        <div className="container px-4 md:px-6 mb-8">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <ScrollTextAnimation
-                type="words"
-                as="h2"
-                className="text-3xl font-bold tracking-tighter md:text-4xl"
-              >
-                {t("projects.title")}
-              </ScrollTextAnimation>
-              <ScrollTextAnimation
-                type="slide-up"
-                as="p"
-                className="max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400"
-              >
-                {t("projects.subtitle")}
-              </ScrollTextAnimation>
-            </div>
+      <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <FadeInUp>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                {getTranslation(language, "skillsTitle")}
+              </h2>
+            </FadeInUp>
+            <FadeInUp delay={200}>
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                {getTranslation(language, "skillsDescription")}
+              </p>
+            </FadeInUp>
           </div>
-        </div>
 
-        <HorizontalScroll className="h-[600px] mb-8">
-          {featuredProjects.map((project, index) => (
-            <div
-              key={project.id}
-              className="min-w-[350px] md:min-w-[400px] p-4"
-            >
-              <MotionCard delay={index * 0.1} className="h-full">
-                <ProjectCard project={project} />
-              </MotionCard>
-            </div>
-          ))}
-        </HorizontalScroll>
-
-        <div className="container px-4 md:px-6">
-          <div className="flex justify-center">
-            <MagneticButton as="div" strength={40}>
-              <Button asChild>
-                <Link href="/projects">{t("projects.viewAll")}</Link>
-              </Button>
-            </MagneticButton>
-          </div>
-        </div>
-      </section>
-
-      {/* Parallax Image Section */}
-      <section className="py-16 md:py-24 bg-white dark:bg-slate-900 overflow-hidden">
-        <div className="container px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="space-y-6">
-                <ScrollTextAnimation
-                  type="words"
-                  as="h2"
-                  className="text-3xl font-bold tracking-tighter md:text-4xl"
-                >
-                  {language === "fa"
-                    ? "طراحی خلاقانه، توسعه حرفه‌ای"
-                    : "Creative Design, Professional Development"}
-                </ScrollTextAnimation>
-                <ScrollTextAnimation
-                  type="slide-up"
-                  as="p"
-                  className="text-gray-500 dark:text-gray-400"
-                >
-                  {language === "fa"
-                    ? "با ترکیب طراحی خلاقانه و توسعه حرفه‌ای، وب‌سایت‌هایی می‌سازم که نه تنها زیبا هستند، بلکه عملکرد بالایی نیز دارند."
-                    : "Combining creative design and professional development, I build websites that are not only beautiful but also high-performing."}
-                </ScrollTextAnimation>
-                <ScrollTextAnimation
-                  type="slide-up"
-                  delay={0.1}
-                  as="ul"
-                  className="space-y-2"
-                >
-                  {[
-                    language === "fa"
-                      ? "طراحی واکنش‌گرا برای تمام دستگاه‌ها"
-                      : "Responsive design for all devices",
-                    language === "fa"
-                      ? "انیمیشن‌های روان و جذاب"
-                      : "Smooth and engaging animations",
-                    language === "fa"
-                      ? "بهینه‌سازی SEO برای رتبه‌بندی بهتر"
-                      : "SEO optimization for better ranking",
-                    language === "fa"
-                      ? "کدنویسی تمیز و قابل نگهداری"
-                      : "Clean and maintainable code architecture",
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ScrollTextAnimation>
-                <MagneticButton as="div" strength={40}>
-                  <Button asChild className="mt-4">
-                    <Link href="/about">
-                      {language === "fa" ? "بیشتر درباره من" : "More About Me"}
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </MagneticButton>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2 h-[400px] md:h-[500px]">
-              <TiltCard
-                tiltMaxAngleX={10}
-                tiltMaxAngleY={10}
-                glareOpacity={0.2}
-                scale={1.02}
+          <StaggeredChildren staggerDelay={150}>
+            {[
+              {
+                icon: Code,
+                title: getTranslation(language, "frontendDevelopment"),
+                desc: getTranslation(language, "frontendDesc"),
+                color: "text-blue-600 dark:text-blue-400",
+              },
+              {
+                icon: Palette,
+                title: getTranslation(language, "uiuxDesign"),
+                desc: getTranslation(language, "uiuxDesc"),
+                color: "text-purple-600 dark:text-purple-400",
+              },
+              {
+                icon: Smartphone,
+                title: getTranslation(language, "mobileDevelopment"),
+                desc: getTranslation(language, "mobileDesc"),
+                color: "text-green-600 dark:text-green-400",
+              },
+              {
+                icon: Zap,
+                title: getTranslation(language, "performance"),
+                desc: getTranslation(language, "performanceDesc"),
+                color: "text-yellow-600 dark:text-yellow-400",
+              },
+            ].map((skill, index) => (
+              <Card
+                key={index}
+                className="text-center p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover-lift"
               >
-                <ParallaxImage
-                  src="/placeholder.svg?height=600&width=800"
-                  alt="Creative Design"
-                  width={800}
-                  height={600}
-                  className="w-full h-full rounded-lg shadow-xl"
-                  speed={0.5}
-                  scale={1.3}
-                />
-              </TiltCard>
+                <skill.icon className={`h-12 w-12 ${skill.color} mx-auto mb-4`} />
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">{skill.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{skill.desc}</p>
+              </Card>
+            ))}
+          </StaggeredChildren>
+
+          <FadeInUp delay={600}>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+              {skills.map((skill, index) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-900 dark:text-white">{skill.name}</span>
+                    <AnimatedCounter
+                      end={skill.level}
+                      suffix="%"
+                      delay={800 + index * 100}
+                      className="text-sm text-gray-600 dark:text-gray-300"
+                    />
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                      style={{
+                        width: `${skill.level}%`,
+                        animationDelay: `${800 + index * 100}ms`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          </FadeInUp>
         </div>
       </section>
 
-      {/* Blog Section */}
-      <section className="py-12 md:py-16 bg-white dark:bg-slate-900">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <ScrollTextAnimation
-                type="words"
-                as="h2"
-                className="text-3xl font-bold tracking-tighter md:text-4xl"
-              >
-                {t("blog.title")}
-              </ScrollTextAnimation>
-              <ScrollTextAnimation
-                type="slide-up"
-                as="p"
-                className="max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400"
-              >
-                {t("blog.subtitle")}
-              </ScrollTextAnimation>
+      {/* Featured Projects */}
+      <AnimatedBackground variant="particles">
+        <section className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <FadeInUp>
+                <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                  {getTranslation(language, "featuredProjects")}
+                </h2>
+              </FadeInUp>
+              <FadeInUp delay={200}>
+                <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  {getTranslation(language, "featuredProjectsDesc")}
+                </p>
+              </FadeInUp>
             </div>
-          </div>
-          <div className="grid gap-6 mt-8">
-            {latestPosts.map((post, index) => (
-              <MotionCard key={post.id} delay={index * 0.1}>
-                <TiltCard
-                  tiltMaxAngleX={3}
-                  tiltMaxAngleY={3}
-                  glareOpacity={0.1}
-                >
-                  <Card className="bg-transparent">
-                    <CardContent className="p-6">
-                      <div className="space-y-2">
-                        <ScrollTextAnimation
-                          type="words"
-                          as="h3"
-                          className="text-2xl font-bold"
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {featuredProjects.map((project, index) => (
+                <ScaleIn key={project.id} delay={index * 200}>
+                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover-lift">
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={project.image || "/placeholder.svg"}
+                        alt={project.title}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-xl text-gray-900 dark:text-white">{project.title}</CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-gray-300">
+                        {project.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tech.map((tech) => (
+                          <Badge
+                            key={tech}
+                            variant="secondary"
+                            className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:scale-105 transition-transform"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="transition-all duration-300 hover:scale-105 bg-transparent"
                         >
-                          {post.title}
-                        </ScrollTextAnimation>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(post.date).toLocaleDateString(
-                            language === "fa" ? "fa-IR" : "en-US"
-                          )}
-                        </p>
-                        <p className="text-gray-500 dark:text-gray-400">
-                          {post.excerpt}
-                        </p>
-                        <MagneticButton as="div" strength={20}>
-                          <Button variant="link" className="p-0" asChild>
-                            <Link href={`/blog/${post.slug}`}>
-                              {t("blog.readMore")}
-                            </Link>
-                          </Button>
-                        </MagneticButton>
+                          <Link href={project.github}>
+                            <Github className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                            {getTranslation(language, "code")}
+                          </Link>
+                        </Button>
+                        <Button size="sm" asChild className="transition-all duration-300 hover:scale-105">
+                          <Link href={project.live}>
+                            <ExternalLink className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                            {getTranslation(language, "liveDemo")}
+                          </Link>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                </TiltCard>
-              </MotionCard>
+                </ScaleIn>
+              ))}
+            </div>
+
+            <FadeInUp delay={600}>
+              <div className="text-center">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  asChild
+                  className="transition-all duration-300 hover:scale-105 bg-transparent animate-pulse-glow"
+                >
+                  <Link href="/projects">
+                    {getTranslation(language, "viewAllProjects")}{" "}
+                    <ArrowRight className="ml-2 h-4 w-4 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
+                  </Link>
+                </Button>
+              </div>
+            </FadeInUp>
+          </div>
+        </section>
+      </AnimatedBackground>
+
+      {/* Recent Blog Posts */}
+      <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <FadeInUp>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                {getTranslation(language, "latestBlogPosts")}
+              </h2>
+            </FadeInUp>
+            <FadeInUp delay={200}>
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                {getTranslation(language, "blogDescription")}
+              </p>
+            </FadeInUp>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {recentPosts.map((post, index) => (
+              <SlideIn key={post.id} direction={index % 2 === 0 ? "left" : "right"} delay={index * 200}>
+                <Card className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover-lift">
+                  <CardHeader>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(post.date).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <User className="h-4 w-4" />
+                        {post.readTime}
+                      </div>
+                    </div>
+                    <CardTitle className="text-xl hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-gray-900 dark:text-white">
+                      <Link href={`/blog/${post.id}`}>{post.title}</Link>
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-300">{post.excerpt}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </SlideIn>
             ))}
           </div>
-          <div className="flex justify-center mt-8">
-            <MagneticButton as="div" strength={40}>
-              <Button asChild>
-                <Link href="/blog">{t("blog.viewAll")}</Link>
+
+          <FadeInUp delay={400}>
+            <div className="text-center">
+              <Button
+                variant="outline"
+                size="lg"
+                asChild
+                className="transition-all duration-300 hover:scale-105 bg-transparent"
+              >
+                <Link href="/blog">
+                  {getTranslation(language, "readAllPosts")}{" "}
+                  <ArrowRight className="ml-2 h-4 w-4 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
+                </Link>
               </Button>
-            </MagneticButton>
-          </div>
+            </div>
+          </FadeInUp>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-12 md:py-16 bg-slate-50 dark:bg-slate-800">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <ScrollTextAnimation
-                type="words"
-                as="h2"
-                className="text-3xl font-bold tracking-tighter md:text-4xl"
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-800 dark:to-purple-800 text-white transition-colors duration-300 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-500/10 animate-gradient-x"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <FadeInUp>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 animate-text-glow">
+              {getTranslation(language, "ctaTitle")}
+            </h2>
+          </FadeInUp>
+          <FadeInUp delay={200}>
+            <p className="text-xl mb-8 opacity-90">{getTranslation(language, "ctaDescription")}</p>
+          </FadeInUp>
+          <FadeInUp delay={400}>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button size="lg" variant="secondary" asChild className="transition-all duration-300 hover:scale-105">
+                <Link href="/contact">{getTranslation(language, "startProject")}</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white hover:bg-white hover:text-blue-600 bg-transparent transition-all duration-300 hover:scale-105"
+                asChild
               >
-                {t("contact.title")}
-              </ScrollTextAnimation>
-              <ScrollTextAnimation
-                type="slide-up"
-                as="p"
-                className="max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400"
-              >
-                {t("contact.subtitle")}
-              </ScrollTextAnimation>
+                <Link href="/about">{getTranslation(language, "learnMore")}</Link>
+              </Button>
             </div>
-            <div className="w-full max-w-sm space-y-2">
-              <MagneticButton as="div" strength={50}>
-                <Button className="w-full" asChild>
-                  <Link href="/contact">{t("contact.sendMessage")}</Link>
-                </Button>
-              </MagneticButton>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("contact.email")} your.email@example.com
-              </p>
-            </div>
-          </div>
+          </FadeInUp>
         </div>
       </section>
     </div>
-  );
+  )
 }

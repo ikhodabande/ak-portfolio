@@ -3,177 +3,265 @@
 import type React from "react"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Plus, Upload } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import DashboardLayout from "@/components/dashboard/dashboard-layout"
+import { Switch } from "@/components/ui/switch"
+import { ArrowLeft, X } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { ProjectService } from "@/lib/data"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function NewProjectPage() {
   const router = useRouter()
-  const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    image: "",
+    tech: [] as string[],
+    category: "",
+    github: "",
+    live: "",
+    featured: false,
+    status: "draft" as "published" | "draft",
+  })
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()])
-      setTagInput("")
-    }
-  }
+  const [newTech, setNewTech] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove))
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault()
-      handleAddTag()
-    }
-  }
+  const categories = ["Frontend", "Full Stack", "Mobile", "Backend", "Design"]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+    setIsLoading(true)
+    setError("")
+    setSuccess("")
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      if (!formData.title || !formData.description || !formData.category) {
+        setError("Please fill in all required fields")
+        return
+      }
 
-    // In a real app, you would submit to your API here
-    console.log("Project submitted")
+      const newProject = ProjectService.create(formData)
+      setSuccess("Project created successfully!")
 
-    setIsSubmitting(false)
-    router.push("/dashboard/projects")
+      setTimeout(() => {
+        router.push("/dashboard?tab=projects")
+      }, 1500)
+    } catch (err) {
+      setError("Failed to create project")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const addTech = () => {
+    if (newTech.trim() && !formData.tech.includes(newTech.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        tech: [...prev.tech, newTech.trim()],
+      }))
+      setNewTech("")
+    }
+  }
+
+  const removeTech = (techToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tech: prev.tech.filter((tech) => tech !== techToRemove),
+    }))
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      addTech()
+    }
   }
 
   return (
-    <DashboardLayout>
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6">افزودن پروژه جدید</h1>
-
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>اطلاعات پروژه</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">عنوان پروژه</Label>
-                    <Input id="title" placeholder="عنوان پروژه را وارد کنید" required />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">توضیحات</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="توضیحات پروژه را وارد کنید"
-                      className="min-h-[120px]"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="github">لینک GitHub</Label>
-                      <Input id="github" placeholder="https://github.com/username/project" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="live">لینک نمایش زنده</Label>
-                      <Input id="live" placeholder="https://project-demo.com" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="tags">تگ ها</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="tags"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="React, Next.js, ..."
-                      />
-                      <Button type="button" onClick={handleAddTag} variant="outline">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    {tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                            {tag}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveTag(tag)}
-                              className="text-muted-foreground hover:text-foreground"
-                            >
-                              <X className="h-3 w-3" />
-                              <span className="sr-only">Remove {tag}</span>
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>تصویر پروژه</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center">
-                    <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground mb-1">فایل را اینجا بکشید و رها کنید یا کلیک کنید</p>
-                    <p className="text-xs text-muted-foreground">PNG, JPG یا GIF (حداکثر 2MB)</p>
-                    <Input type="file" className="hidden" id="project-image" accept="image/*" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => document.getElementById("project-image")?.click()}
-                    >
-                      انتخاب فایل
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>انتشار</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Label htmlFor="date">تاریخ انتشار</Label>
-                    <Input type="date" id="date" />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button type="button" variant="outline" onClick={() => router.push("/dashboard/projects")}>
-                    انصراف
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "در حال ذخیره..." : "ذخیره پروژه"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
+    <div className="min-h-screen py-8 px-4 bg-gray-50">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/dashboard?tab=projects">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Projects
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">Create New Project</h1>
           </div>
-        </form>
+        </div>
+
+        {/* Alerts */}
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {success && (
+          <Alert className="mb-6 border-green-200 bg-green-50 text-green-800">
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Project Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  placeholder="Enter project title..."
+                  value={formData.title}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                  required
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describe your project..."
+                  value={formData.description}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                  rows={4}
+                  required
+                />
+              </div>
+
+              {/* Image URL */}
+              <div className="space-y-2">
+                <Label htmlFor="image">Image URL</Label>
+                <Input
+                  id="image"
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.image}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
+                />
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <Label>Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Technologies */}
+              <div className="space-y-2">
+                <Label>Technologies</Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Add technology..."
+                    value={newTech}
+                    onChange={(e) => setNewTech(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                  />
+                  <Button type="button" onClick={addTech}>
+                    Add
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.tech.map((tech) => (
+                    <Badge key={tech} variant="secondary" className="flex items-center gap-1">
+                      {tech}
+                      <button type="button" onClick={() => removeTech(tech)} className="ml-1 hover:text-red-600">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="github">GitHub URL</Label>
+                  <Input
+                    id="github"
+                    placeholder="https://github.com/username/repo"
+                    value={formData.github}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, github: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="live">Live Demo URL</Label>
+                  <Input
+                    id="live"
+                    placeholder="https://project-demo.com"
+                    value={formData.live}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, live: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              {/* Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="featured">Featured Project</Label>
+                  <Switch
+                    id="featured"
+                    checked={formData.featured}
+                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, featured: checked }))}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="status">Publish Immediately</Label>
+                  <Switch
+                    id="status"
+                    checked={formData.status === "published"}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, status: checked ? "published" : "draft" }))
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex gap-4">
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Creating..." : "Create Project"}
+                </Button>
+                <Button type="button" variant="outline" asChild>
+                  <Link href="/dashboard?tab=projects">Cancel</Link>
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-    </DashboardLayout>
+    </div>
   )
 }

@@ -1,110 +1,34 @@
-import type React from "react";
-import "./globals.css";
-import { Inter, Vazirmatn } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
-import { LanguageProvider } from "@/context/language-context";
-import type { Metadata, Viewport } from "next";
-import { SmoothCursor } from "@/components/ui/smooth-cursor";
-
-// Load fonts
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic"],
-  variable: "--font-vazirmatn",
-});
+import type React from "react"
+import type { Metadata } from "next"
+import "./globals.css"
+import { inter, vazirmatn, notoSansFarsi } from "@/lib/fonts"
+import { cn } from "@/lib/utils"
+import { ClientLayout } from "@/components/client-layout"
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | امیرمحمد خدابنده",
-    default: "امیرمحمد خدابنده | طراح و توسعه دهنده فرانت اند",
-  },
+  title: "امیرمحمد خدابنده - توسعه‌دهنده فرانت‌اند | Amirmohammad Khodabande - Front-End Developer",
   description:
-    "طراحی وبسایت و توسعه فرانت اند با امیرمحمد خدابنده - Amirmohammad Khodabande Front-end Developer Portfolio",
-  keywords: [
-    "امیرمحمد خدابنده",
-    "طراحی وبسایت",
-    "فرانت اند",
-    "Amirmohammad Khodabande",
-    "Front-end Developer",
-    "Web Design",
-  ],
-  manifest: "/manifest.json",
-  authors: [
-    {
-      name: "Amirmohammad Khodabande",
-      url: "https://amirmkhodabande.ir",
-    },
-  ],
-  creator: "Amirmohammad Khodabande",
-  openGraph: {
-    type: "website",
-    locale: "fa_IR",
-    alternateLocale: "en_US",
-    title: "امیرمحمد خدابنده | طراح و توسعه دهنده فرانت اند",
-    description: "طراحی وبسایت و توسعه فرانت اند با امیرمحمد خدابنده",
-    siteName: "امیرمحمد خدابنده",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "امیرمحمد خدابنده",
-      },
-    ],
-  },
-  icons: {
-    icon: "/favicon.png",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "امیرمحمد خدابنده | طراح و توسعه دهنده فرانت اند",
-    description: "طراحی وبسایت و توسعه فرانت اند با امیرمحمد خدابنده",
-    images: ["/og-image.jpg"],
-    creator: "@yourtwitterhandle",
-  },
-  generator: "v0.dev",
-};
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-  ],
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+    "توسعه‌دهنده حرفه‌ای فرانت‌اند متخصص در React، Next.js و تکنولوژی‌های مدرن وب | Professional front-end developer specializing in React, Next.js, and modern web technologies.",
+    generator: 'v0.dev'
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="fa" dir="rtl">
-      <body className={`${inter.variable} ${vazirmatn.variable} font-sans`}>
-        <LanguageProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </ThemeProvider>
-        </LanguageProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          inter.variable,
+          vazirmatn.variable,
+          notoSansFarsi.variable,
+          "font-sans antialiased transition-all duration-300",
+        )}
+      >
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
-  );
+  )
 }
