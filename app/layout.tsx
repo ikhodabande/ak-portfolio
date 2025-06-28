@@ -21,9 +21,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          inter.variable,
-          vazirmatn.variable,
-          notoSansFarsi.variable,
+          // inter.variable,
+          // vazirmatn.variable,
+          // notoSansFarsi.variable,
           "font-sans antialiased transition-all duration-300",
         )}
       >
