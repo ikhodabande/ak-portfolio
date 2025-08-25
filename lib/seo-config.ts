@@ -18,13 +18,13 @@ export const seoConfig = {
   ],
   author: {
     name: "Amirmohammad Khodabande",
-    email: "amirmohammad@example.com",
-    twitter: "@amirmohammad",
-    github: "https://github.com/amirmohammad",
-    linkedin: "https://linkedin.com/in/amirmohammad-khodabande",
+    email: "amimhmdkh@gmail.com",
+    twitter: "@ikhodabande",
+    github: "https://github.com/ikhodabande",
+    linkedin: "https://linkedin.com/in/ikhodabande",
   },
   social: {
-    twitter: "@amirmohammad",
+    twitter: "@ikhodabande",
     github: "amirmohammad",
     linkedin: "amirmohammad-khodabande",
   },

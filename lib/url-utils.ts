@@ -45,6 +45,7 @@ export function generateSocialShareUrl(
   platform: "twitter" | "linkedin" | "facebook",
   url: string,
   text?: string,
+  link?: string
 ): string {
   const encodedUrl = encodeURIComponent(url)
   const encodedText = text ? encodeURIComponent(text) : ""
