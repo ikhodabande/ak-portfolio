@@ -1,0 +1,45 @@
+export const seoConfig = {
+  defaultTitle: "Amirmohammad Khodabande - Frontend Developer",
+  titleTemplate: "%s | Amirmohammad Khodabande",
+  defaultDescription:
+    "Frontend developer specializing in React, Next.js, and Vite.js. Creating modern web experiences with cutting-edge technologies.",
+  siteUrl: "https://amirmohammad.dev",
+  defaultKeywords: [
+    "Frontend Developer",
+    "React",
+    "Next.js",
+    "Vite.js",
+    "TypeScript",
+    "Tailwind CSS",
+    "Web Development",
+    "JavaScript",
+    "Tehran",
+    "Iran",
+  ],
+  author: {
+    name: "Amirmohammad Khodabande",
+    email: "amirmohammad@example.com",
+    twitter: "@amirmohammad",
+    github: "https://github.com/amirmohammad",
+    linkedin: "https://linkedin.com/in/amirmohammad-khodabande",
+  },
+  social: {
+    twitter: "@amirmohammad",
+    github: "amirmohammad",
+    linkedin: "amirmohammad-khodabande",
+  },
+  address: {
+    locality: "Tehran",
+    country: "Iran",
+  },
+  skills: [
+    "React",
+    "Next.js",
+    "Vite.js",
+    "TypeScript",
+    "JavaScript",
+    "Tailwind CSS",
+    "Frontend Development",
+    "Web Development",
+  ],
+}
